@@ -1,4 +1,3 @@
-import Axios from 'axios'
 import jsonwebtoken from 'jsonwebtoken'
 import { createLogger } from '../../utils/logger.mjs'
 import JwksRsa from 'jwks-rsa';
@@ -11,6 +10,7 @@ export async function handler(event) {
   try {
     logger.info("Start authenticating user....");
     const jwtToken = await verifyToken(event.authorizationToken)
+    logger.info(`User ${jwtToken.sub} was authenticated.`);
     return {
       principalId: jwtToken.sub,
       policyDocument: {

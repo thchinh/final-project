@@ -1,5 +1,8 @@
 import { createTodo } from "../../businessLogic/todo.mjs";
+import { createLogger } from "../../utils/logger.mjs";
 import { getUserId } from "../utils.mjs";
+
+const logger = createLogger("createTodo");
 
 export async function handler(event) {
   const body = JSON.parse(event.body)
@@ -11,7 +14,9 @@ export async function handler(event) {
   };
 
   try {
+    logger.info("Creating todo with body: ", body)
     const newTodo = await createTodo(body, userId);
+    logger.info("Creating is success ");
     return {
       statusCode: 201,
       headers,
