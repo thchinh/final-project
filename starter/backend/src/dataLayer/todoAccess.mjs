@@ -60,25 +60,22 @@ export class TodoAccess {
 
     await this.dynamoDbClient.put({
       TableName: this.todosTable,
-      Item: this.revertItem(todo)
+      Item: todo
     })
     return todo
   }
 
   async deleteTodo(userId, todoId) {
     logger.info(`Deleting a todo`)
+    logger.info(`todoId: ${todoId}, userId: ${userId}`);
     try {
       const params = {
         TableName: this.todosTable,
         Key: {
-          todoId: {
-            S: todoId
-          },
-          userId: {
-            S: userId
-          }
+          userId,
+          todoId
         }
-      }
+      };
 
       const result = await this.dynamoDbClient.delete(params)
       logger.info('Item deleted successfully:', result)
@@ -89,29 +86,23 @@ export class TodoAccess {
     }
   }
 
-  async updateTodo(todo) {
+  async updateTodo(todo, userId) {
     const params = {
       TableName: this.todosTable,
       Key: {
-        todoId: {
-          S: todo.todoId
-        }
+        userId,
+        todoId: todo.todoId
       },
-      UpdateExpression: 'SET dueDate = :dueDate, name = :name, done = :done ',
+      UpdateExpression: 'SET dueDate = :dueDate, #taskName = :taskName, done = :done ',
+      ExpressionAttributeNames: { '#taskName': 'name' },
       ExpressionAttributeValues: {
-        ':dueDate': {
-          S: todo.dueDate
-        },
-        ':name': {
-          S: todo.name
-        },
-        ':done': {
-          BOOL: todo.done
-        }
+        ':dueDate': todo.dueDate,
+        ':taskName': todo.name,
+        ':done': todo.done
       }
     }
     try {
-      const data = await this.dynamoDbClient.updateItem(params)
+      const data = await this.dynamoDbClient.update(params)
       logger.info('Item updated successfully:', data)
       return data
     } catch (err) {

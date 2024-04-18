@@ -6,7 +6,8 @@ export async function handler(event) {
   const userId = getUserId(event);
   const headers = {
     'Access-Control-Allow-Origin': '*',
-    //'Access-Control-Allow-Credentials': true
+    'Access-Control-Allow-Credentials': true,
+    'Content-Type': 'application/json'
   };
 
   try {
@@ -22,7 +23,7 @@ export async function handler(event) {
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ error }),
+      body: JSON.stringify({ error: error?.message }),
     };
   }
 }

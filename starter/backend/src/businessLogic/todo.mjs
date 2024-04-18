@@ -26,11 +26,11 @@ export async function createTodo(body, userId) {
     const id = uuid.v4();
     const attachmentUrl = `https://${bucketName}.s3.amazonaws.com/${id}`;
     const todo = {
-        id: id,
+        todoId: id,
         userId: userId,
         attachmentUrl,
         dueDate: body.dueDate,
-        createdAt: new Date().toUTCString(),
+        createdAt: new Date().toISOString(),
         name: body.name,
         done: false
     };
@@ -38,10 +38,10 @@ export async function createTodo(body, userId) {
     return todo;
 }
 
-export async function updateTodo(body, todoId) {
+export async function updateTodo(body, todoId, userId) {
     const todoUpdate = {
         ...body,
         todoId
     }
-    return todoAccess.updateTodo(todoUpdate);
+    return todoAccess.updateTodo(todoUpdate, userId);
 }

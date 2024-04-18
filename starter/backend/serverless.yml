@@ -54,6 +54,9 @@ functions:
           authorizer: Auth
           cors: true
           path: todos
+          request:
+            schemas:
+              application/json: ${file(models/create-todo-request.json)}
     iamRoleStatements:
       - Effect: "Allow"
         Action:
@@ -75,6 +78,9 @@ functions:
           authorizer: Auth
           cors: true
           path: todos/{todoId}
+          request:
+            schemas:
+              application/json: ${file(models/update-todo-request.json)}
     iamRoleStatements:
       - Effect: "Allow"
         Action:
@@ -100,7 +106,7 @@ functions:
       - Effect: "Allow"
         Action:
           - dynamodb:Query
-          - dynamodb:Delete
+          - dynamodb:DeleteItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
       - Effect: "Allow"
         Action: 
@@ -168,7 +174,7 @@ resources:
               - AttributeName: dueDate
                 KeyType: RANGE
             Projection:
-              ProjectionType: ALL # What attributes will be copied to an index
+              ProjectionType: ALL
 
 
     TodosBucket:
